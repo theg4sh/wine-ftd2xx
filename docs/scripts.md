@@ -2,7 +2,7 @@
 
 ## Layout
 
-- `wine/` — Wine source submodule, pinned to the `wine-11.0` tag.
+- `wine/` — Wine source submodule, pinned by the selected branch to Wine 9.22, 10.20, or 11.21.
 - `ftd2xx/api.json` — export ordinals, C signatures, implementation class, required symbols, and shared-layout overrides.
 - `ftd2xx/generate.py` — generates repetitive PE wrappers, native thunks, WoW64 conversions, dispatch tables, and the spec file.
 - `ftd2xx/*_prelude.*` — editable headers and common declarations.
@@ -30,7 +30,7 @@ The generator is intentionally not a general C parser. A new API needs manifest 
 
 Preparation is idempotent. The registration edits are the only changes to tracked Wine files. The script edits `configure` directly to avoid introducing a dependency on a particular Autoconf version; it does not run `autoreconf`.
 
-To try another Wine version, check out the desired commit in `wine/` and rerun preparation. The anchors used by `patch_wine.py` are deliberately checked: an incompatible version fails instead of silently producing an incomplete build. Review and adapt the registration logic for that version if necessary.
+To select another major series, check out `wine-9.22`, `wine-10.20`, or `wine-11.21` in the superproject, run `git submodule update --init --depth 1 wine`, and use a fresh `BUILD_DIR`. Each branch pins the newest release in its major series. The anchors used by `patch_wine.py` are deliberately checked: an incompatible version fails instead of silently producing an incomplete build.
 
 ## `scripts/build-wine.sh`
 
@@ -57,13 +57,17 @@ Convenience wrapper for `scripts/build-wine.sh`.
 
 ## `runner.sh`
 
-Runs an arbitrary Windows program with the local Wine build and FTD2XX wrapper. Pass the program and its arguments after the script name. It checks the Wine executable and native FTDI library before starting and never removes kernel drivers. See [runtime setup](runtime.md) for supported environment overrides.
+Runs an arbitrary Windows program with the local Wine build and FTD2XX wrapper. Pass the program and its arguments after the script name. It checks the Wine executable and native FTDI library before starting. It warns about FTDI interfaces owned by `ftdi_sio` and prints their exact unbind commands, but never changes kernel-driver bindings. See [runtime setup](runtime.md) for supported environment overrides.
 
 ## `install.sh`
 
 Installs the completed Wine build with `make install`, then adds `runner.sh` and the documentation. `PREFIX` defaults to `/opt/wine-ftd2xx`; `DESTDIR` is available for package staging. `BUILD_DIR` and `JOBS` have the same meaning as in the build script.
 
 The installer checks the i386 PE DLL and Unix library before installing. It does not install the proprietary FTDI library or the Windows application, and it does not invoke `sudo` itself.
+
+## `install-system.sh`
+
+Installs only the three FTD2XX module files beside an existing system Wine's drivers. The wrapper must first be built from the branch matching the system Wine major version. `WINE_BIN` defaults to `wine` from `PATH`; `WINE_LIBDIR` overrides automatic library-directory detection, and `DESTDIR` supports package staging. Existing FTD2XX modules are preserved unless `FORCE=1` is explicitly set.
 
 ## `ftd2xx/patch_wine.py`
 

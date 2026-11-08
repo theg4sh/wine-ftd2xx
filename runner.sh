@@ -34,6 +34,16 @@ if [[ "$FTD2XX_LIBRARY" == */* && ! -e "$FTD2XX_LIBRARY" ]]; then
     exit 1
 fi
 
+for interface in /sys/bus/usb/drivers/ftdi_sio/*:*; do
+    [[ -e "$interface" ]] || continue
+    [[ $(<"$interface/../idVendor") == 0403 ]] || continue
+    name=${interface##*/}
+    printf 'Warning: FTDI interface %s (%s:%s) is bound to ftdi_sio; D2XX may not open it.\n' \
+        "$name" "$(<"$interface/../idVendor")" "$(<"$interface/../idProduct")" >&2
+    printf "If this is the target device, unbind it with: echo '%s' | sudo tee /sys/bus/usb/drivers/ftdi_sio/unbind\n" \
+        "$name" >&2
+done
+
 export WINEPREFIX WINEDEBUG FTD2XX_LIBRARY
 
 exec "$WINE" "$@"
