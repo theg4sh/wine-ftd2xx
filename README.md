@@ -12,7 +12,15 @@ i386 Windows application
   -> x86-64 libftd2xx.so
 ```
 
-Wine 11.0 is included as a pinned Git submodule. Generated module sources are kept in `ftd2xx/generated`; editable inputs are directly under `ftd2xx`.
+Wine is included as a pinned Git submodule. `main` tracks the newest release, currently 11.21. The latest release in each supported major series has its own branch:
+
+- `wine-9.22`
+- `wine-10.20`
+- `wine-11.21`
+
+Check out the branch matching the Wine major version you intend to run, initialize the submodule, and use a fresh build directory. These branches change the submodule reference; the generation and registration scripts apply the wrapper to that release.
+
+Generated module sources are kept in `ftd2xx/generated`; editable inputs are directly under `ftd2xx`.
 
 ## Build
 
