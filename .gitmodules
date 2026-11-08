@@ -1,0 +1,4 @@
+[submodule "wine"]
+	path = wine
+	url = https://gitlab.winehq.org/wine/wine.git
+	ignore = all

@@ -1,0 +1,7 @@
+MODULE    = ftd2xx.dll
+UNIXLIB   = ftd2xx.so
+UNIX_LIBS = $(PTHREAD_LIBS)
+
+SOURCES = \
+	ftd2xx.c \
+	unixlib.c
