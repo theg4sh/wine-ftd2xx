@@ -55,6 +55,16 @@ Omit `--disable-tests` for contribution validation. If configure options change,
 
 Convenience wrapper for `scripts/build-wine.sh`.
 
+## `runner.sh`
+
+Runs an arbitrary Windows program with the local Wine build and FTD2XX wrapper. Pass the program and its arguments after the script name. It checks the Wine executable and native FTDI library before starting and never removes kernel drivers. See [runtime setup](runtime.md) for supported environment overrides.
+
+## `install.sh`
+
+Installs the completed Wine build with `make install`, then adds `runner.sh` and the documentation. `PREFIX` defaults to `/opt/wine-ftd2xx`; `DESTDIR` is available for package staging. `BUILD_DIR` and `JOBS` have the same meaning as in the build script.
+
+The installer checks the i386 PE DLL and Unix library before installing. It does not install the proprietary FTDI library or the Windows application, and it does not invoke `sudo` itself.
+
 ## `ftd2xx/patch_wine.py`
 
 Normally invoked by preparation rather than directly. Its direct form is:
