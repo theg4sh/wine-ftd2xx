@@ -32,6 +32,31 @@ Install Wine's build dependencies, MinGW-w64, Python 3, and the 64-bit FTDI D2XX
 
 See [scripts and build options](docs/scripts.md), [architecture and API coverage](docs/architecture.md), and [runtime setup](docs/runtime.md).
 
+## Build for an older Wine version
+
+Use a separate worktree to keep the source, generated registration, and build products isolated from the current Wine build. For example, to build for Wine 10.x:
+
+```sh
+git worktree add ../wine-ftd2xx-10.20 wine-10.20
+cd ../wine-ftd2xx-10.20
+git submodule update --init --depth 1 wine
+./build.sh
+```
+
+For Wine 9.x, substitute `wine-9.22` in both the worktree path and branch name. The resulting wrapper is in that worktree's `build/wine/dlls/ftd2xx` directory. Run it with `runner.sh` from the same worktree, or install only the modules beside a matching system Wine:
+
+```sh
+sudo ./install-system.sh
+```
+
+A direct branch switch also works, but use a fresh build directory to avoid reusing another release's configuration:
+
+```sh
+git switch wine-10.20
+git submodule update --init --depth 1 wine
+BUILD_DIR="$PWD/build/wine-10.20" ./build.sh
+```
+
 ## Status
 
 The synchronous D2XX API subset, device enumeration, opaque handle mapping, and event notification are implemented. The remaining exports return explicit unsupported errors. This tree does not implement `ftd2xx64.dll`, Win32 COMM/overlapped APIs, or EEPROM structures containing nested pointers.
